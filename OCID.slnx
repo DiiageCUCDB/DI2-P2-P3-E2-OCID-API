@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="OCID.Api.Tests/OCID.Api.Tests.csproj" />
+  <Project Path="OCID.Api/OCID.Api.csproj" />
+  <Project Path="OCID.Application.Tests/OCID.Application.Tests.csproj" />
+  <Project Path="OCID.Application/OCID.Application.csproj" />
+  <Project Path="OCID.Domain/OCID.Domain.csproj" />
+  <Project Path="OCID.Infrastructure.Tests/OCID.Infrastructure.Tests.csproj" />
+  <Project Path="OCID.Infrastructure/OCID.Infrastructure.csproj" />
+</Solution>
