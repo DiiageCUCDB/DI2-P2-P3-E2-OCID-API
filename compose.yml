@@ -1,0 +1,7 @@
+services:
+  api:
+    image: ghcr.io/diiagecucdb/di2-p2p3-e2-ocid-api:latest
+    ports:
+      - '3000:8080'
+    environment:
+      - ConnectionStrings__Default=${DB_CONNECTION}
