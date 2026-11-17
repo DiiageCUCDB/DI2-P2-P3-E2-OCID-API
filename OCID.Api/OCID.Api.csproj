@@ -25,6 +25,7 @@
     <ProjectReference Include="..\OCID.Application\OCID.Application.csproj" />
     <ProjectReference Include="..\OCID.Domain\OCID.Domain.csproj" />
     <ProjectReference Include="..\OCID.Infrastructure\OCID.Infrastructure.csproj" />
+    <ProjectReference Include="..\OCID.Messaging\OCID.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

@@ -26,6 +26,9 @@ services:
       - '3000:8080'
     environment:
       - ConnectionStrings__Default=Server=db,1433;Database=OCID;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+      - Messaging__Enabled=${MESSAGING_ENABLED:-false}
+      - Messaging__AzureEventHub__ConnectionString=${EVENTHUB_CONNECTION_STRING:-}
+      - Messaging__AzureEventHub__CheckpointStorageConnectionString=${EVENTHUB_CHECKPOINT_STORAGE:-}
     restart: unless-stopped
 
 volumes:

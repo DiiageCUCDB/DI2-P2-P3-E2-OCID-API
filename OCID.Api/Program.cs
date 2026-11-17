@@ -37,6 +37,7 @@ try
 
     // Extensions
     builder.Services.AddDatabase(builder.Configuration, builder.Environment);
+    builder.Services.AddMessaging(builder.Configuration);
     builder.Services.AddInfraServices(builder.Configuration);
     builder.Services.AddAppServices(builder.Configuration);
     builder.Services.AddHealthChecks();
