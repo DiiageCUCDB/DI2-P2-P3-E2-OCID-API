@@ -6,4 +6,6 @@
   <Project Path="OCID.Domain/OCID.Domain.csproj" />
   <Project Path="OCID.Infrastructure.Tests/OCID.Infrastructure.Tests.csproj" />
   <Project Path="OCID.Infrastructure/OCID.Infrastructure.csproj" />
+  <Project Path="OCID.Redis.Tests/OCID.Redis.Tests.csproj" />
+  <Project Path="OCID.Redis/OCID.Redis.csproj" />
 </Solution>

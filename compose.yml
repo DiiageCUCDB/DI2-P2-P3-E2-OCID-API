@@ -17,16 +17,36 @@ services:
       start_period: 20s
     restart: unless-stopped
 
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
   api:
-    image: ghcr.io/diiagecucdb/<repo-name>:latest
+    image: ghcr.io/diiagecucdb/di2-p2p3-e2-ocid-api:latest
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     ports:
       - '3000:8080'
     environment:
       - ConnectionStrings__Default=Server=db,1433;Database=OCID;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+      - Redis__ConnectionString=redis:6379,password=${REDIS_PASSWORD}
+      - Redis__KeyPrefix=ocid:
     restart: unless-stopped
 
 volumes:
   sqldata:
+  redisdata:
