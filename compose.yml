@@ -1,7 +1,32 @@
 services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: ${DB_PASSWORD}
+      MSSQL_PID: Developer
+    ports:
+      - '1433:1433'
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
   api:
-    image: ghcr.io/diiagecucdb/di2-p2p3-e2-ocid-api:latest
+    image: ghcr.io/diiagecucdb/<repo-name>:latest
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - '3000:8080'
     environment:
-      - ConnectionStrings__Default=${DB_CONNECTION}
+      - ConnectionStrings__Default=Server=db,1433;Database=OCID;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
+    restart: unless-stopped
+
+volumes:
+  sqldata:
