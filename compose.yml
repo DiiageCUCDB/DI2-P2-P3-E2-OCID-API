@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: ghcr.io/diiagecucdb/<repo-name>:latest
+    image: ghcr.io/diiagecucdb/di2-p2p3-e2-ocid-api:latest
     depends_on:
       db:
         condition: service_healthy
