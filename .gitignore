@@ -9,3 +9,4 @@ appsettings.Production.json
 *.db-wal
 .env
 secrets/firebase.json
+logs/

@@ -7,6 +7,7 @@ using Scalar.AspNetCore;
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    builder.AddNLogLogging();
 
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
@@ -78,7 +79,12 @@ try
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"An error occurred: {ex}");
+    NLog.LogManager.GetCurrentClassLogger().Error(ex, "Application stopped because of an exception");
+}
+finally
+{
+    // Flush and stop NLog's background threads before the process exits
+    NLog.LogManager.Shutdown();
 }
 
 /// <summary>

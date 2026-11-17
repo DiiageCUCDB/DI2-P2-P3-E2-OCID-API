@@ -21,5 +21,8 @@ ENV ASPNETCORE_HTTP_PORTS=8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 8080
 COPY --from=build /app/publish .
+# NLog writes its files here; the app runs as a non-root user
+RUN mkdir -p /app/logs && chown $APP_UID /app/logs
+ENV NLOG_LOG_DIR=/app/logs
 USER $APP_UID
 ENTRYPOINT ["dotnet", "OCID.Api.dll"]
