@@ -37,23 +37,23 @@ try
     });
 
     // Extensions
-    //builder.Services.AddDatabase(builder.Configuration, builder.Environment);
+    builder.Services.AddDatabase(builder.Configuration, builder.Environment);
     builder.Services.AddInfraServices(builder.Configuration);
     builder.Services.AddAppServices(builder.Configuration);
     builder.Services.AddHealthChecks();
 
     var app = builder.Build();
 
-    // using (var scope = app.Services.CreateScope())
-    // {
-    //     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    //     // Create/update the schema first, in every environment
-    //     await context.Database.MigrateAsync();
+        // Create/update the schema first, in every environment
+        await context.Database.MigrateAsync();
 
-    //     if (app.Environment.IsDevelopment() || args.Contains("--seed"))
-    //         await DbInitializer.SeedAsync(context);
-    // }
+        if (app.Environment.IsDevelopment() || args.Contains("--seed"))
+            await DbInitializer.SeedAsync(context);
+    }
 
     // Docs (non-prod only)
     if (!app.Environment.IsProduction())
