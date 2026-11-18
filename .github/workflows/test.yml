@@ -1,0 +1,33 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [main, dev]
+  # Also run on main so a broken merge is caught right away
+  push:
+    branches: [main, dev]
+    paths-ignore:
+      - '**.md'
+
+permissions:
+  contents: read
+
+# Cancel the old run when a new commit is pushed to the same PR
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - run: dotnet restore OCID.slnx
+      - run: dotnet build OCID.slnx -c Release --no-restore
+      - run: dotnet test OCID.slnx -c Release --no-build
