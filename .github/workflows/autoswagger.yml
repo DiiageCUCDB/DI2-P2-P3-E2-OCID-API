@@ -1,0 +1,96 @@
+name: API security scan (Autoswagger)
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  autoswagger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Optional: only needed if your API requires a database
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout API
+        uses: actions/checkout@v4
+
+      # ---- Start your API (adapt to your stack) ----
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run API in background
+        env:
+          ASPNETCORE_URLS: http://localhost:5000
+          ASPNETCORE_ENVIRONMENT: Development   # Swagger is usually only exposed in Development
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=testdb;Username=test;Password=test"
+        run: |
+          dotnet run --project ./YourProject/YourProject.csproj --no-launch-profile > api.log 2>&1 &
+
+      - name: Wait for API to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:5000/swagger/v1/swagger.json > /dev/null; then
+              echo "API is up"; exit 0
+            fi
+            sleep 2
+          done
+          echo "API did not start"; cat api.log; exit 1
+
+      # ---- Autoswagger ----
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Autoswagger
+        run: |
+          git clone --depth 1 https://github.com/intruder-io/autoswagger.git
+          cd autoswagger
+          pip install -r requirements.txt
+          # Presidio usually needs a spaCy model; uncomment if the scan errors about it
+          # python -m spacy download en_core_web_lg
+
+      - name: Run Autoswagger
+        run: |
+          python autoswagger/autoswagger.py \
+            http://localhost:5000/swagger/v1/swagger.json \
+            -risk -rate 20 -product > autoswagger-results.json
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autoswagger-results
+          path: |
+            autoswagger-results.json
+            api.log
+
+      - name: Fail if findings
+        run: |
+          COUNT=$(jq 'length' autoswagger-results.json)
+          echo "Findings: $COUNT"
+          if [ "$COUNT" -gt 0 ]; then
+            echo "Unauthenticated endpoints with PII/secrets/large responses found:"
+            jq . autoswagger-results.json
+            exit 1
+          fi
