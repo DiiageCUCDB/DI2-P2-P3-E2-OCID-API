@@ -3,7 +3,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: 'Y'
-      MSSQL_SA_PASSWORD: ${DB_PASSWORD}
+      MSSQL_SA_PASSWORD: 'admin123!'
       MSSQL_PID: Developer
     ports:
       - '1433:1433'
@@ -15,19 +15,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
-    restart: unless-stopped
-
-  api:
-    image: ghcr.io/diiagecucdb/di2-p2p3-e2-ocid-api:latest
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./logs:/app/logs
-    ports:
-      - '3000:8080'
-    environment:
-      - ConnectionStrings__Default=Server=db,1433;Database=OCID;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True
     restart: unless-stopped
 
 volumes:
