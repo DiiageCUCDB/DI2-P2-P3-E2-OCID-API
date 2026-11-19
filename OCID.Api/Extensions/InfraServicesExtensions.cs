@@ -1,3 +1,6 @@
+using OCID.Infrastructure.Interfaces;
+using OCID.Infrastructure.Repositories;
+
 namespace OCID.Api.Extensions;
 
 public static class InfraServicesExtensions
@@ -10,6 +13,7 @@ public static class InfraServicesExtensions
     public static IServiceCollection AddInfraServices(this IServiceCollection services,
         IConfiguration config)
     {
+        services.AddScoped<ILogRepository, LogRepository>();
         return services;
     }
 }

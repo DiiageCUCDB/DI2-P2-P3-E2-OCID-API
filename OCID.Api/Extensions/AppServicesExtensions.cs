@@ -1,3 +1,6 @@
+using OCID.Application.Interfaces;
+using OCID.Application.Services;
+
 namespace OCID.Api.Extensions;
 
 public static class AppServicesExtensions
@@ -10,6 +13,7 @@ public static class AppServicesExtensions
     public static IServiceCollection AddAppServices(this IServiceCollection services,
         IConfiguration config)
     {
+        services.AddScoped<ILogService, LogService>();
         return services;
     }
 }
