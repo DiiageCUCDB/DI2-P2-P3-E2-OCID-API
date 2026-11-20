@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/DiiageCUCDB/DI2-P2-P3-E2-OCID-API/compare/v1.0.0...v1.0.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* cicd azure ([09bb171](https://github.com/DiiageCUCDB/DI2-P2-P3-E2-OCID-API/commit/09bb1714d3c5f68a16073430c4ae51a4a5da800f))
+
 # 1.0.0 (2026-11-20)
 
 
