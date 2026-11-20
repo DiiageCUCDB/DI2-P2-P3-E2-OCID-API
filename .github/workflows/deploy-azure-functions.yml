@@ -71,6 +71,8 @@ jobs:
         run: |
           cp deploy/azure-functions/host.json "${RUNNER_TEMP}/publish/host.json"
           cp -r deploy/azure-functions/api "${RUNNER_TEMP}/publish/api"
+          mkdir -p "${RUNNER_TEMP}/publish/.azurefunctions"
+          touch "${RUNNER_TEMP}/publish/.azurefunctions/.keep"
 
       # Zipped here (not via upload-artifact) so the executable bit survives
       - name: Package
@@ -78,6 +80,7 @@ jobs:
           chmod +x "${RUNNER_TEMP}/publish/OCID.Api"
           test -f "${RUNNER_TEMP}/publish/host.json"
           test -f "${RUNNER_TEMP}/publish/api/function.json"
+          test -d "${RUNNER_TEMP}/publish/.azurefunctions"
           (cd "${RUNNER_TEMP}/publish" && zip -qr "${RUNNER_TEMP}/functionapp.zip" .)
           ls -lh "${RUNNER_TEMP}/functionapp.zip"
 
